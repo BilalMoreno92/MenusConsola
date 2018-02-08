@@ -10,7 +10,6 @@ namespace MenuConsola
     /// Estilo de la línea del marco.
     /// </summary>
     public enum EstiloMarco { Transparente, Simple, Doble };
-
     /// <summary>
     /// Clase Menú
     /// </summary>
@@ -36,7 +35,6 @@ namespace MenuConsola
         private int LONGITUD_LINEA;
         private int linea;  // Numero de línea para el método Mostrar()
         #endregion
-
         #region Propiedades
         /// <summary>
         /// Color del fondo del menú (el fondo de la consola alrededor del menú no se verá afectado).
@@ -185,7 +183,6 @@ namespace MenuConsola
         /// </summary>
         public EstiloMarco EstiloMarco { get { return _marco._estiloMarco; } set { _marco._estiloMarco = value; } }
         #endregion
-
         #region Constructores
         /// <summary>
         /// Constructor vacío. Ocupa toda la ventana por defecto.
@@ -362,7 +359,6 @@ namespace MenuConsola
             ColorTexto = colorTexto;
         }
         #endregion
-
         #region Métodos
         /// <summary>
         /// Muestra el menú por pantalla.
@@ -449,7 +445,7 @@ namespace MenuConsola
             Console.CursorTop = 0;
             Console.CursorLeft = 0;
         }
-        
+
         /// <summary>
         /// Muestra el título del menú.
         /// </summary>
@@ -507,6 +503,4 @@ namespace MenuConsola
         }
         #endregion
     }
-    
-
 }
