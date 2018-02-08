@@ -17,6 +17,8 @@ namespace MenuConsola
     public class Menu
     {
         #region Campos
+        private const int MINIMO_ALTURA = 7;
+        private const int MINIMO_ANCHO = 7;
         private Marco _marco;
         private string _titulo;
         private string[] _contenido;
@@ -32,7 +34,9 @@ namespace MenuConsola
         private int LINEA_MENSAJE;
         private int COMIENZO_LINEA;
         private int LONGITUD_LINEA;
-#endregion
+        private int linea;  // Numero de línea para el método Mostrar()
+        #endregion
+
         #region Propiedades
         /// <summary>
         /// Color del fondo del menú (el fondo de la consola alrededor del menú no se verá afectado).
@@ -81,7 +85,15 @@ namespace MenuConsola
             }
         }
         /// <summary>
-        /// Título del menú, en el marco superior.
+        /// Color de la línea del marco.
+        /// </summary>
+        public ConsoleColor ColorMarco
+        {
+            get { return _marco._colorMarco; }
+            set { _marco._colorMarco = value; }
+        }
+        /// <summary>
+        /// Título del menú, en el marco superior. La longitud máxima de línea es Ancho - 2.
         /// </summary>
         public string Titulo
         {
@@ -89,7 +101,7 @@ namespace MenuConsola
             set { _titulo = value; }
         }
         /// <summary>
-        /// Opciones o contenido principal del menú, en el marco central.
+        /// Opciones o contenido principal del menú, en el marco central. El número máximo de opciones a mostrar será Alto - 6. La longitud máxima de línea es Ancho - 2.
         /// </summary>
         public string[] Contenido
         {
@@ -97,7 +109,7 @@ namespace MenuConsola
             set { _contenido = value; }
         }
         /// <summary>
-        /// Mensaje mostrado en el marco inferior.
+        /// Mensaje mostrado en el marco inferior. La longitud máxima de línea es Ancho - 3.
         /// </summary>
         public string Mensaje
         {
@@ -105,19 +117,75 @@ namespace MenuConsola
             set { _titulo = value; }
         }
         /// <summary>
-        /// Color de la línea del marco.
+        /// Posición de la esquina superior izquierda del marco.
         /// </summary>
-        public ConsoleColor ColorMarco
+        public Coordenada SuperiorIzquierda
         {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
+            get { return _marco._superiorIzquierda; }
+            //set
+            //{
+            //    _marco._superiorIzquierda.Top = value.Top;
+            //    _marco._superiorIzquierda.Left = value.Left;
+            //    if (Alto > Console.WindowHeight || Alto < MINIMO_ALTURA || Ancho > Console.WindowWidth || Ancho < MINIMO_ANCHO)
+            //        throw _marco.MarcoFueraDeRangoException;
+
+
+            //}
+        }
+        /// <summary>
+        /// Posición de la esquina inferior derecha del marco.
+        /// </summary>
+        public Coordenada InferiorDerecha
+        {
+            get { return _marco._inferiorDerecha; }
+            //set
+            //{
+            //    _marco._inferiorDerecha.Top = value.Top;
+            //    _marco._superiorIzquierda.Left = value.Left;
+            //    if (Alto > Console.WindowHeight || Alto < MINIMO_ALTURA || Ancho > Console.WindowWidth || Ancho < MINIMO_ANCHO)
+            //        throw _marco.MarcoFueraDeRangoException;
+            //}
+        }
+        /// <summary>
+        /// Altura del marco.
+        /// </summary>
+        public int Alto
+        {
+            get { return _marco._inferiorDerecha.Top - _marco._superiorIzquierda.Top + 1; }
             set
             {
+                if (value < MINIMO_ALTURA)
+                    InferiorDerecha.Top = _marco._superiorIzquierda.Top + MINIMO_ALTURA - 1;
+                else
+                    if (value > Console.WindowHeight)
+                    InferiorDerecha.Top = Console.WindowHeight - 1;
+                else
+                    InferiorDerecha.Top = _marco._superiorIzquierda.Top + value - 1;
             }
         }
+        /// <summary>
+        /// Ancho del marco.
+        /// </summary>
+        public int Ancho
+        {
+            get { return _marco._inferiorDerecha.Left - _marco._superiorIzquierda.Left + 1; }
+            set
+            {
+                if (value < MINIMO_ALTURA)
+                    InferiorDerecha.Left = _marco._superiorIzquierda.Left + MINIMO_ANCHO - 1;
+                else
+                    if (value > Console.WindowHeight)
+                    InferiorDerecha.Left = Console.WindowWidth - 1;
+                else
+                    InferiorDerecha.Left = _marco._superiorIzquierda.Left + value - 1;
+            }
+        }
+        /// <summary>
+        /// Estilo del marco (Transparente, Simple y Doble)
+        /// </summary>
+        public EstiloMarco EstiloMarco { get { return _marco._estiloMarco; } set { _marco._estiloMarco = value; } }
         #endregion
+
         #region Constructores
         /// <summary>
         /// Constructor vacío. Ocupa toda la ventana por defecto.
@@ -145,9 +213,15 @@ namespace MenuConsola
         {
 
             _marco = new Marco(esquinaSuperiorIzquierda, esquinaInferiorDerecha, estiloMarco);
+            if (Alto < MINIMO_ALTURA)
+                Alto = MINIMO_ALTURA;
+            if (Ancho < MINIMO_ANCHO)
+                Ancho = MINIMO_ANCHO;
             _titulo = titulo;
             _contenido = contenido;
             _mensaje = mensaje;
+            _colorFondo = Console.BackgroundColor;
+            ColorTexto = Console.ForegroundColor;
         }
         /// <summary>
         /// Crea un menú a partir de su esquina superior derecha, alto, ancho, estilo del marco, título, contenido y mensaje.
@@ -161,10 +235,14 @@ namespace MenuConsola
         /// <param name="mensaje">Mensaje al pié del menú</param>
         public Menu(Coordenada esquinaSuperiorIzquierda, int alto, int ancho, EstiloMarco estiloMarco, string titulo, string[] contenido, string mensaje)
         {
-            _marco = new Marco(esquinaSuperiorIzquierda, alto, ancho, estiloMarco);
+            _marco = new Marco(esquinaSuperiorIzquierda, estiloMarco);
+            Alto = alto;
+            Ancho = ancho;
             _titulo = titulo;
             _contenido = contenido;
             _mensaje = mensaje;
+            _colorFondo = Console.BackgroundColor;
+            ColorTexto = Console.ForegroundColor;
         }
         /// <summary>
         /// Crea un menú a partir de su altura, ancho, estilo de línea del marco, titulo, contenido principal y mensaje, que empieza en la posicion (0, 0).
@@ -177,10 +255,14 @@ namespace MenuConsola
         /// <param name="mensaje">Mensaje al pié del menú</param>
         public Menu(int alto, int ancho, EstiloMarco estiloMarco, string titulo, string[] contenido, string mensaje)
         {
-            _marco = new Marco(new Coordenada(0, 0), alto, ancho, estiloMarco);
+            _marco = new Marco(new Coordenada(0, 0), estiloMarco);
+            Alto = alto;
+            Ancho = ancho;
             _titulo = titulo;
             _contenido = contenido;
             _mensaje = mensaje;
+            _colorFondo = Console.BackgroundColor;
+            ColorTexto = Console.ForegroundColor;
 
         }
         /// <summary>
@@ -196,10 +278,14 @@ namespace MenuConsola
         /// <param name="mensaje">Mensaje al pié del menú</param>
         public Menu(Coordenada esquinaSuperiorIzquierda, int alto, int ancho, EstiloMarco estiloMarco, ConsoleColor colorMarco, string titulo, string[] contenido, string mensaje)
         {
-            _marco = new Marco(esquinaSuperiorIzquierda, alto, ancho, estiloMarco, colorMarco);
+            _marco = new Marco(esquinaSuperiorIzquierda, estiloMarco, colorMarco);
+            Alto = alto;
+            Ancho = ancho;
             _titulo = titulo;
             _contenido = contenido;
             _mensaje = mensaje;
+            _colorFondo = Console.BackgroundColor;
+            ColorTexto = Console.ForegroundColor;
         }
         /// <summary>
         /// Crea un menú a partir de su esquina superior izquierda, alto, ancho, estilo del marco, color del marco, titulo, contenido, mensaje, color de fondo y color del texto.
@@ -216,7 +302,9 @@ namespace MenuConsola
         /// <param name="colorTexto">Color de todo el texto del menú.</param>
         public Menu(Coordenada esquinaSuperiorIzquierda, int alto, int ancho, EstiloMarco estiloMarco, ConsoleColor colorMarco, string titulo, string[] contenido, string mensaje, ConsoleColor colorFondo, ConsoleColor colorTexto)
         {
-            _marco = new Marco(esquinaSuperiorIzquierda, alto, ancho, estiloMarco, colorMarco);
+            _marco = new Marco(esquinaSuperiorIzquierda, estiloMarco, colorMarco);
+            Alto = alto;
+            Ancho = ancho;
             _titulo = titulo;
             _contenido = contenido;
             _mensaje = mensaje;
@@ -237,9 +325,15 @@ namespace MenuConsola
         {
 
             _marco = new Marco(esquinaSuperiorIzquierda, esquinaInferiorDerecha, estiloMarco, colorMarco);
+            if (Alto < MINIMO_ALTURA)
+                Alto = MINIMO_ALTURA;
+            if (Ancho < MINIMO_ANCHO)
+                Ancho = MINIMO_ANCHO;
             _titulo = titulo;
             _contenido = contenido;
             _mensaje = mensaje;
+            _colorFondo = Console.BackgroundColor;
+            ColorTexto = Console.ForegroundColor;
         }
         /// <summary>
         /// 
@@ -257,6 +351,10 @@ namespace MenuConsola
         {
 
             _marco = new Marco(esquinaSuperiorIzquierda, esquinaInferiorDerecha, estiloMarco, colorMarco);
+            if (Alto < MINIMO_ALTURA)
+                Alto = MINIMO_ALTURA;
+            if (Ancho < MINIMO_ANCHO)
+                Ancho = MINIMO_ANCHO;
             _titulo = titulo;
             _contenido = contenido;
             _mensaje = mensaje;
@@ -264,6 +362,7 @@ namespace MenuConsola
             ColorTexto = colorTexto;
         }
         #endregion
+
         #region Métodos
         /// <summary>
         /// Muestra el menú por pantalla.
@@ -271,18 +370,86 @@ namespace MenuConsola
         public void Mostrar()
         {
             ConsoleColor colorTextoEntrada = Console.ForegroundColor;
-            LINEA_TITULO = Marco.SuperiorIzquierda.Top + 1;
-            PRIMERA_LINEA_OPCIONES = Marco.SuperiorIzquierda.Top + 3;
-            MAXIMO_OPCIONES = Marco.Alto - 6;
-            LINEA_MENSAJE = Marco.InferiorDerecha.Top - 1;
-            COMIENZO_LINEA = Marco.SuperiorIzquierda.Left + 1;
-            LONGITUD_LINEA = Marco.Ancho - 2;
-            Marco.Mostrar();
+            LINEA_TITULO = SuperiorIzquierda.Top + 1;
+            PRIMERA_LINEA_OPCIONES = SuperiorIzquierda.Top + 3;
+            MAXIMO_OPCIONES = Alto - 6;
+            LINEA_MENSAJE = InferiorDerecha.Top - 1;
+            COMIENZO_LINEA = SuperiorIzquierda.Left + 1;
+            LONGITUD_LINEA = Ancho - 2;
+            MostrarMarco();
             MostrarTitulo();
             MostrarContenido();
             MostrarMensaje();
             Console.ForegroundColor = colorTextoEntrada;
         }
+        /// <summary>
+        /// Mostrar marco con el número de líneas especificadas (0, 1 ó 2).
+        /// </summary>
+        private void MostrarMarco()
+        {
+            char[] marcoElegido = new char[8];
+            linea = SuperiorIzquierda.Top;
+            DefinirJuegoCaracteres(marcoElegido);
+            ConsoleColor colorTextoEntrada = Console.ForegroundColor;
+            Console.Clear();
+            Console.ForegroundColor = ColorMarco;
+            MostrarMarcoTitulo(marcoElegido);
+            MostrarMarcoContenido(marcoElegido);
+            MostrarMarcoMensaje(marcoElegido);
+            Console.ForegroundColor = colorTextoEntrada;
+        }
+
+        private void DefinirJuegoCaracteres(char[] marcoElegido)
+        {
+            char[] marcoTransparente = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+            char[] marcoSimple = { '┌', '┐', '└', '┘', '├', '┤', '│', '─' };
+            char[] marcoDoble = { '╔', '╗', '╚', '╝', '╠', '╣', '║', '═' };
+            if (_marco._estiloMarco == EstiloMarco.Transparente)
+                marcoTransparente.CopyTo(marcoElegido, 0);
+            else if (_marco._estiloMarco == EstiloMarco.Simple)
+                marcoSimple.CopyTo(marcoElegido, 0);
+            else if (_marco._estiloMarco == EstiloMarco.Doble)
+                marcoDoble.CopyTo(marcoElegido, 0);
+        }
+
+        private void MostrarMarcoTitulo(char[] marcoElegido)
+        {
+            Console.CursorTop = linea++;
+            Console.CursorLeft = SuperiorIzquierda.Left;
+            Console.WriteLine(marcoElegido[0].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[1]);
+            Console.CursorTop = linea++;
+            Console.CursorLeft = SuperiorIzquierda.Left;
+            Console.WriteLine(marcoElegido[6].ToString().PadRight(Ancho - 1) + marcoElegido[6]);
+            Console.CursorTop = linea++;
+            Console.CursorLeft = SuperiorIzquierda.Left;
+            Console.WriteLine(marcoElegido[4].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[5]);
+        }
+
+        private void MostrarMarcoContenido(char[] marcoElegido)
+        {
+            for (int i = 0; i < Alto - 6; i++)
+            {
+                Console.CursorTop = linea++;
+                Console.CursorLeft = SuperiorIzquierda.Left;
+                Console.WriteLine(marcoElegido[6].ToString().PadRight(Ancho - 1) + marcoElegido[6]);
+            }
+        }
+
+        private void MostrarMarcoMensaje(char[] marcoElegido)
+        {
+            Console.CursorTop = linea++;
+            Console.CursorLeft = SuperiorIzquierda.Left;
+            Console.WriteLine(marcoElegido[4].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[5]);
+            Console.CursorTop = linea++;
+            Console.CursorLeft = SuperiorIzquierda.Left;
+            Console.WriteLine(marcoElegido[6].ToString().PadRight(Ancho - 1) + marcoElegido[6]);
+            Console.CursorTop = linea;
+            Console.CursorLeft = SuperiorIzquierda.Left;
+            Console.WriteLine(marcoElegido[2].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[3]);
+            Console.CursorTop = 0;
+            Console.CursorLeft = 0;
+        }
+        
         /// <summary>
         /// Muestra el título del menú.
         /// </summary>
@@ -340,219 +507,6 @@ namespace MenuConsola
         }
         #endregion
     }
-    /// <summary>
-    /// Clase Marco
-    /// </summary>
-    public class Marco
-    {
-        #region Campos
-        Coordenada _superiorIzquierda;
-        Coordenada _inferiorDerecha;
-        internal const int MINIMO_ALTURA = 7;
-        internal const int MINIMO_ANCHO = 7;
-        internal const string MENSAJE_EXCEPCION_MARCO = "El tamaño del marco está fuera del rango de valores permitidos.";
-        internal Exception MarcoFueraDeRangoException = new ArgumentOutOfRangeException(MENSAJE_EXCEPCION_MARCO, new ArgumentOutOfRangeException());
-        private ConsoleColor _colorMarco;
-        private EstiloMarco _estiloMarco;
-        private int linea;  // Numero de línea para el método Mostrar()
-
-        #endregion
-        #region Propiedades
-        /// <summary>
-        /// Color de la línea del marco.
-        /// </summary>
-        public ConsoleColor ColorMarco
-        {
-            get { return _colorMarco; }
-            set { _colorMarco = value; }
-        }
-        /// <summary>
-        /// Posición de la esquina superior izquierda del marco.
-        /// </summary>
-        public Coordenada SuperiorIzquierda
-        {
-            get { return _superiorIzquierda; }
-            set
-            {
-                _superiorIzquierda.Top = value.Top;
-                _superiorIzquierda.Left = value.Left;
-                if (Alto > Console.WindowHeight || Alto < MINIMO_ALTURA || Ancho > Console.WindowWidth || Ancho < MINIMO_ANCHO)
-                    throw MarcoFueraDeRangoException;
-
-
-            }
-        }
-        /// <summary>
-        /// Posición de la esquina inferior derecha del marco.
-        /// </summary>
-        public Coordenada InferiorDerecha
-        {
-            get { return _inferiorDerecha; }
-            set
-            {
-                _inferiorDerecha.Top = value.Top;
-                _superiorIzquierda.Left = value.Left;
-                if (Alto > Console.WindowHeight || Alto < MINIMO_ALTURA || Ancho > Console.WindowWidth || Ancho < MINIMO_ANCHO)
-                    throw MarcoFueraDeRangoException;
-            }
-        }
-        /// <summary>
-        /// Altura del marco.
-        /// </summary>
-        public int Alto
-        {
-            get { return _inferiorDerecha.Top - _superiorIzquierda.Top + 1; }
-            set
-            {
-                if (value < MINIMO_ALTURA)
-                    InferiorDerecha.Top = _superiorIzquierda.Top + MINIMO_ALTURA - 1;
-                else
-                    if (value > Console.WindowHeight)
-                    InferiorDerecha.Top = Console.WindowHeight - 1;
-                else
-                    InferiorDerecha.Top = _superiorIzquierda.Top + value - 1;
-            }
-        }
-        /// <summary>
-        /// Ancho del marco.
-        /// </summary>
-        public int Ancho
-        {
-            get { return _inferiorDerecha.Left - _superiorIzquierda.Left + 1; }
-            set
-            {
-                if (value < MINIMO_ALTURA)
-                    InferiorDerecha.Left = _superiorIzquierda.Left + MINIMO_ANCHO - 1;
-                else
-                    if (value > Console.WindowHeight)
-                    InferiorDerecha.Left = Console.WindowWidth - 1;
-                else
-                    InferiorDerecha.Left = _superiorIzquierda.Left + value - 1;
-            }
-        }
-        /// <summary>
-        /// Estilo del marco (Transparente, Simple y Doble)
-        /// </summary>
-        public EstiloMarco EstiloMarco { get {return _estiloMarco;} set { _estiloMarco = value; }}
-        #endregion
-        #region Constructores
-        public Marco()
-        {
-            _superiorIzquierda = new Coordenada(0, 0);
-            _inferiorDerecha = new Coordenada();
-            Alto = Console.WindowHeight;
-            Ancho = Console.WindowWidth;
-            //_inferiorDerecha = new Coordenada(Console.WindowHeight - 1, Console.WindowWidth - 1);
-            EstiloMarco = EstiloMarco.Simple;
-            _colorMarco = Console.ForegroundColor;
-        }
-        public Marco(Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, EstiloMarco estiloMarco)
-        {
-            _superiorIzquierda = esquinaSuperiorIzquierda;
-            _inferiorDerecha = esquinaInferiorDerecha;
-            EstiloMarco = estiloMarco;
-            _colorMarco = Console.ForegroundColor;
-            if (Alto < MINIMO_ALTURA)
-                Alto = MINIMO_ALTURA;
-            if (Ancho < MINIMO_ANCHO)
-                Ancho = MINIMO_ANCHO;
-        }
-        public Marco(Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, EstiloMarco estiloMarco, ConsoleColor colorMarco)
-        {
-            _superiorIzquierda = esquinaSuperiorIzquierda;
-            _inferiorDerecha = esquinaInferiorDerecha;
-            EstiloMarco = estiloMarco;
-            _colorMarco = colorMarco;
-            if (Alto < MINIMO_ALTURA)
-                Alto = MINIMO_ALTURA;
-            if (Ancho < MINIMO_ANCHO)
-                Ancho = MINIMO_ANCHO;
-        }
-        public Marco(Coordenada esquinaSuperiorIzquierda, int alto, int ancho, EstiloMarco estiloMarco)
-        {
-            _superiorIzquierda = esquinaSuperiorIzquierda;
-            Alto = alto;
-            Ancho = ancho;
-            EstiloMarco = estiloMarco;
-        }
-        public Marco(Coordenada esquinaSuperiorIzquierda, int alto, int ancho, EstiloMarco estiloMarco, ConsoleColor colorMarco)
-        {
-            _superiorIzquierda = esquinaSuperiorIzquierda;
-            Alto = alto;
-            Ancho = ancho;
-            EstiloMarco = estiloMarco;
-            _colorMarco = colorMarco;
-        }
-        #endregion
-        #region Métodos
-        /// <summary>
-        /// Mostrar marco con el número de líneas especificadas (0, 1 ó 2).
-        /// </summary>
-        protected void Mostrar()
-        {
-            char[] marcoElegido = new char[8];
-            linea = SuperiorIzquierda.Top;
-            DefinirJuegoCaracteres(marcoElegido);
-            ConsoleColor colorTextoEntrada = Console.ForegroundColor;
-            Console.Clear();
-            Console.ForegroundColor = _colorMarco;
-            MostrarMarcoTitulo(marcoElegido);
-            MostrarMarcoContenido(marcoElegido);
-            MostrarMarcoMensaje(marcoElegido);
-            Console.ForegroundColor = colorTextoEntrada;
-        }
-
-        private void MostrarMarcoMensaje(char[] marcoElegido)
-        {
-            Console.CursorTop = linea++;
-            Console.CursorLeft = SuperiorIzquierda.Left;
-            Console.WriteLine(marcoElegido[4].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[5]);
-            Console.CursorTop = linea++;
-            Console.CursorLeft = SuperiorIzquierda.Left;
-            Console.WriteLine(marcoElegido[6].ToString().PadRight(Ancho - 1) + marcoElegido[6]);
-            Console.CursorTop = linea;
-            Console.CursorLeft = SuperiorIzquierda.Left;
-            Console.WriteLine(marcoElegido[2].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[3]);
-            Console.CursorTop = 0;
-            Console.CursorLeft = 0;
-        }
-
-        private void MostrarMarcoContenido(char[] marcoElegido)
-        {
-            for (int i = 0; i < Alto - 6; i++)
-            {
-                Console.CursorTop = linea++;
-                Console.CursorLeft = SuperiorIzquierda.Left;
-                Console.WriteLine(marcoElegido[6].ToString().PadRight(Ancho - 1) + marcoElegido[6]);
-            }
-        }
-
-        private void MostrarMarcoTitulo(char[] marcoElegido)
-        {
-            Console.CursorTop = linea++;
-            Console.CursorLeft = SuperiorIzquierda.Left;
-            Console.WriteLine(marcoElegido[0].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[1]);
-            Console.CursorTop = linea++;
-            Console.CursorLeft = SuperiorIzquierda.Left;
-            Console.WriteLine(marcoElegido[6].ToString().PadRight(Ancho - 1) + marcoElegido[6]);
-            Console.CursorTop = linea++;
-            Console.CursorLeft = SuperiorIzquierda.Left;
-            Console.WriteLine(marcoElegido[4].ToString().PadRight(Ancho - 1, marcoElegido[7]) + marcoElegido[5]);
-        }
-
-        private void DefinirJuegoCaracteres(char[] marcoElegido)
-        {
-            char[] marcoTransparente = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
-            char[] marcoSimple = { '┌', '┐', '└', '┘', '├', '┤', '│', '─' };
-            char[] marcoDoble = { '╔', '╗', '╚', '╝', '╠', '╣', '║', '═' };
-            if (EstiloMarco == EstiloMarco.Transparente)
-                marcoTransparente.CopyTo(marcoElegido, 0);
-            else if (EstiloMarco == EstiloMarco.Simple)
-                marcoSimple.CopyTo(marcoElegido, 0);
-            else if (EstiloMarco == EstiloMarco.Doble)
-                marcoDoble.CopyTo(marcoElegido, 0);
-        }
-    }
+    
 
 }
-        #endregion
