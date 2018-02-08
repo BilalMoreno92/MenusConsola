@@ -11,10 +11,10 @@ namespace MenuConsola
         static void Main(string[] args)
         {
             Menu menu;
-            //menu = new Menu(new Coordenada(5, 5), new Coordenada(20, 15), EstiloMarco.Doble, "Menú", new string[] { "hola", "primo", "sgfsdhsdgshsdf", "hola", "primo", "sgfsdhsdgshsdf", "hola", "primo", "sgfsdhsdgshsdf", "hola", "primo", "sgfsdhsdgshsdf" }, "hola ayayayayayayayaayyaayayyaayyyaay");
-            //menu.Mostrar();
+            menu = new Menu(new Coordenada(200, 15), new Coordenada(5, 5), EstiloMarco.Doble, "Menú", new string[] { "hola", "primo", "sgfsdhsdgshsdf", "hola", "primo", "sgfsdhsdgshsdf", "hola", "primo", "sgfsdhsdgshsdf", "hola", "primo", "sgfsdhsdgshsdf" }, "hola ayayayayayayayaayyaayayyaayyyaay");
+            menu.Mostrar();
 
-            //Console.ReadKey();
+            Console.ReadKey();
             //menu.ColorMarco = ConsoleColor.Red;
             //menu.ColorTexto = ConsoleColor.DarkCyan;
             //menu.Ancho = 20;
