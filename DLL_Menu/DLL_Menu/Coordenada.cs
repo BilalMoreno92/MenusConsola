@@ -79,7 +79,7 @@ namespace MenuConsola
         /// <returns>True si coordenadaIzquierda es menor que coordenadaDerecha, de locontrario false.</returns>
         public static bool operator <(Coordenada coordenadaIzquierda, Coordenada coordenadaDerecha)
         {
-            if (coordenadaIzquierda._top < coordenadaDerecha._top && coordenadaIzquierda._left < coordenadaDerecha._left)
+            if (coordenadaIzquierda._top < coordenadaDerecha._top || coordenadaIzquierda._left < coordenadaDerecha._left)
                 return true;
             else return false;
         }

@@ -17,7 +17,7 @@ namespace MenuConsola
     {
         #region Campos
         private const int MINIMO_ALTURA = 7;
-        private const int MINIMO_ANCHO = 7;
+        private const int MINIMO_ANCHO = 15;
         private Marco _marco;
         private string _titulo;
         private string[] _contenido;
@@ -208,7 +208,6 @@ namespace MenuConsola
         /// <param name="mensaje">Mensaje al pié del menú.</param>
         public Menu(Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, EstiloMarco estiloMarco, string titulo, string[] contenido, string mensaje)
         {
-
             _marco = new Marco(esquinaSuperiorIzquierda, esquinaInferiorDerecha, estiloMarco);
             if (Alto < MINIMO_ALTURA)
                 Alto = MINIMO_ALTURA;
@@ -309,7 +308,7 @@ namespace MenuConsola
             ColorTexto = colorTexto;
         }
         /// <summary>
-        /// 
+        /// Crea un menú
         /// </summary>
         /// <param name="esquinaSuperiorIzquierda">Esquina superior izquierda del marco.</param>
         /// <param name="esquinaInferiorDerecha">Esquina inferior derecha del marco.</param>
@@ -333,7 +332,7 @@ namespace MenuConsola
             ColorTexto = Console.ForegroundColor;
         }
         /// <summary>
-        /// 
+        /// Crea un menú
         /// </summary>
         /// <param name="esquinaSuperiorIzquierda">Esquina superior izquierda del marco.</param>
         /// <param name="esquinaInferiorDerecha">Esquina inferior derecha del marco.</param>
@@ -378,9 +377,6 @@ namespace MenuConsola
             MostrarMensaje();
             Console.ForegroundColor = colorTextoEntrada;
         }
-        /// <summary>
-        /// Mostrar marco con el número de líneas especificadas (0, 1 ó 2).
-        /// </summary>
         private void MostrarMarco()
         {
             char[] marcoElegido = new char[8];
@@ -394,7 +390,6 @@ namespace MenuConsola
             MostrarMarcoMensaje(marcoElegido);
             Console.ForegroundColor = colorTextoEntrada;
         }
-
         private void DefinirJuegoCaracteres(char[] marcoElegido)
         {
             char[] marcoTransparente = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
@@ -445,10 +440,6 @@ namespace MenuConsola
             Console.CursorTop = 0;
             Console.CursorLeft = 0;
         }
-
-        /// <summary>
-        /// Muestra el título del menú.
-        /// </summary>
         private void MostrarTitulo()
         {
 
@@ -466,9 +457,6 @@ namespace MenuConsola
                 Console.Write(_titulo);
             }
         }
-        /// <summary>
-        /// Muestra el contenido principal del menú.
-        /// </summary>
         private void MostrarContenido()
         {
             Console.ForegroundColor = _colorContenido;
@@ -482,9 +470,6 @@ namespace MenuConsola
                     Console.Write(_contenido[i]);
             }
         }
-        /// <summary>
-        /// Muestra el mensaje al pie del menú.
-        /// </summary>
         private void MostrarMensaje()
         {
             Console.ForegroundColor = _colorMensaje;

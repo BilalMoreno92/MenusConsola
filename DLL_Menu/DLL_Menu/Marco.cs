@@ -37,10 +37,16 @@ namespace MenuConsola
         }
         public Marco(Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, EstiloMarco estiloMarco, ConsoleColor colorMarco)
         {
-            _superiorIzquierda = esquinaSuperiorIzquierda;
-            _inferiorDerecha = esquinaInferiorDerecha;
-            _estiloMarco = estiloMarco;
-            _colorMarco = colorMarco;
+            if (_inferiorDerecha < _superiorIzquierda)
+                throw new OverflowException("Combinación de coordenadas no válida.");
+            else
+            {
+                _superiorIzquierda = esquinaSuperiorIzquierda;
+                _inferiorDerecha = esquinaInferiorDerecha;
+
+                _estiloMarco = estiloMarco;
+                _colorMarco = colorMarco;
+            }
         }
         public Marco(Coordenada esquinaSuperiorIzquierda, EstiloMarco estiloMarco)
         {
