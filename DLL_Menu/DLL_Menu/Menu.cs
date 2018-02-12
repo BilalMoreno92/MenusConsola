@@ -393,7 +393,6 @@ namespace MenuConsola
             char[] marcoElegido = new char[8];
             linea = SuperiorIzquierda.Top;
             DefinirJuegoCaracteres(marcoElegido);
-            ConsoleColor colorTextoEntrada = Console.ForegroundColor;
             Console.Clear();
             Console.ForegroundColor = ColorMarco;
             MostrarMarcoTitulo(marcoElegido);
