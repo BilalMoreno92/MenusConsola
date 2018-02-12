@@ -399,7 +399,6 @@ namespace MenuConsola
             MostrarMarcoTitulo(marcoElegido);
             MostrarMarcoContenido(marcoElegido);
             MostrarMarcoMensaje(marcoElegido);
-            Console.ForegroundColor = colorTextoEntrada;
         }
 
         private void DefinirJuegoCaracteres(char[] marcoElegido)
