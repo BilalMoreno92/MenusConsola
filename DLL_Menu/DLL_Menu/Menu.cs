@@ -365,13 +365,15 @@ namespace MenuConsola
         public void Mostrar()
         {
             ConsoleColor colorTextoEntrada = Console.ForegroundColor;
-            ConsoleColor colorFondoEntrada = Console.ForegroundColor;
+            ConsoleColor colorFondoEntrada = Console.BackgroundColor;
             LINEA_TITULO = SuperiorIzquierda.Top + 1;
             PRIMERA_LINEA_OPCIONES = SuperiorIzquierda.Top + 3;
             MAXIMO_OPCIONES = Alto - 6;
             LINEA_MENSAJE = InferiorDerecha.Top - 1;
             COMIENZO_LINEA = SuperiorIzquierda.Left + 1;
             LONGITUD_LINEA = Ancho - 2;
+            Console.Clear();
+            Console.BackgroundColor = ColorFondo;
             MostrarMarco();
             MostrarTitulo();
             MostrarContenido();
@@ -384,7 +386,6 @@ namespace MenuConsola
             char[] marcoElegido = new char[8];
             linea = SuperiorIzquierda.Top;
             DefinirJuegoCaracteres(marcoElegido);
-            Console.Clear();
             Console.ForegroundColor = ColorMarco;
             MostrarMarcoTitulo(marcoElegido);
             MostrarMarcoContenido(marcoElegido);
