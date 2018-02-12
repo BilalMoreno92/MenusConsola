@@ -370,6 +370,8 @@ namespace MenuConsola
         public void Mostrar()
         {
             ConsoleColor colorTextoEntrada = Console.ForegroundColor;
+            ConsoleColor colorFondoEntrada = Console.BackgroundColor;
+            Console.BackgroundColor = ColorFondo;
             LINEA_TITULO = SuperiorIzquierda.Top + 1;
             PRIMERA_LINEA_OPCIONES = SuperiorIzquierda.Top + 3;
             MAXIMO_OPCIONES = Alto - 6;
@@ -380,6 +382,7 @@ namespace MenuConsola
             MostrarTitulo();
             MostrarContenido();
             MostrarMensaje();
+            Console.BackgroundColor = colorFondoEntrada;
             Console.ForegroundColor = colorTextoEntrada;
         }
         /// <summary>
